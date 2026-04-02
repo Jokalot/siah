@@ -51,3 +51,6 @@ server_ia/*.pkl
 server_ia/*.csv
 
 server_ia/models/scripts/
+server_ia/**/*.pkl
+server_ia/**/*.h5
+server_ia/**/*.model
