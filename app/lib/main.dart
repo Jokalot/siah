@@ -5,6 +5,8 @@ import 'screens/prediction_screen.dart'; // Importa tu pantalla
 void main() => runApp(SiahApp());
 
 class SiahApp extends StatelessWidget {
+  const SiahApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

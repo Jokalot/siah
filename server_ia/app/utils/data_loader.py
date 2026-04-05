@@ -41,6 +41,31 @@ class DataLoader:
             
         return lag1_dict, lag12_dict
 
+    def get_history_data(self, sector: str, fecha: str):
+        mappings = {
+            "agro": "Agro",
+            "construccion": "Construccion",
+            "manufactura": "Manufactura",
+            "servicios": "Servicios"
+        }
+
+        columna_sector = mappings.get(sector.lower(), "Agro")
+
+        if columna_sector not in self.df.columns:
+            raise ValueError(f"Sector '{sector}' no soportado o columna '{columna_sector}' no encontrada.")
+
+        yearly_df = self.df.groupby(self.df['fecha'].dt.year)[columna_sector].mean()
+        year_5 = yearly_df.tail(5)
+
+        history = []
+        for year, value in year_5.items():
+            history.append({
+                "year": int(year),
+                "value": int(round(value))
+            })
+
+        return history
+
     def prepare_features(self, sector: str, datos_crudos: dict, expected_features: list):
         fecha_str = datos_crudos.get('fecha', self.df['fecha'].max().strftime('%Y-%m-%d'))
         lag1, lag12 = self.get_lags(fecha_str)

@@ -17,15 +17,7 @@ async def get_prediction(payload: PredictionInput):
     """
     try:
         resultado = predictor.predict(payload.sector, payload.fecha, payload.datos_adicionales)
-        
-        narrativa = interpreter.explain(
-            sector=payload.sector,
-            valor=resultado["valor_predicho"],
-            contexto=resultado["metadata_input"],
-            nivel="general"
-        )
-        
-        resultado["interpretacion"] = narrativa
+
         
         return resultado
     except Exception as e:

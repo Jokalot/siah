@@ -45,6 +45,7 @@ class InferenceEngine:
             "features": self._get_expected_features(sector)
         }
 
+
     def predict(self, sector: str, fecha: str, datos_adicionales: dict = None):
         sector = sector.lower()
         if sector not in self.models:
@@ -54,6 +55,7 @@ class InferenceEngine:
         if datos_adicionales:
             datos.update(datos_adicionales)
             
+        history_data = self.data_loader.get_history_data(sector, fecha)
         expected_features = self._get_expected_features(sector)
         input_df = self.data_loader.prepare_features(sector, datos, expected_features)
         
@@ -61,7 +63,8 @@ class InferenceEngine:
         final_result = max(0, float(prediction))
         
         return {
-            "valor_predicho": round(final_result, 2),
+            "valor_predicho": int(round(final_result)),
             "metadata_input": input_df.to_dict(orient='records')[0],
-            "metadata": self.get_metadata(sector)
+            "metadata": self.get_metadata(sector),
+            "history_data": history_data
         }
