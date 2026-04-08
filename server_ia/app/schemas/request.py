@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 class PredictionInput(BaseModel):
     sector: str
@@ -11,3 +11,9 @@ class InterpretationInput(BaseModel):
     valor: float
     variables_clave: Dict[str, Any]
     nivel: str = "general"
+
+class CorrelationRecord(BaseModel):
+    correlation_score: float
+    factor_name: str
+    regression_line: Dict[str, Any]
+    data: List[Dict[str, Any]]
