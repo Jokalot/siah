@@ -1,14 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from app.schemas.request import PredictionInput, InterpretationInput
-
 from app.services.predictor import InferenceEngine
 from app.services.interpreter import CognitiveEngine
+from app.services.correlation import CorrelationService
 
 router = APIRouter()
 
-
 predictor = InferenceEngine(models_path="./models")
 interpreter = CognitiveEngine(provider="openai")
+correlation_service = CorrelationService()
 
 @router.post("/predict", tags=["IA Predictiva"])
 async def get_prediction(payload: PredictionInput):
@@ -17,8 +17,6 @@ async def get_prediction(payload: PredictionInput):
     """
     try:
         resultado = predictor.predict(payload.sector, payload.fecha, payload.datos_adicionales)
-
-        
         return resultado
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -38,6 +36,13 @@ async def get_interpretation(payload: InterpretationInput):
         return {"interpretacion": analisis}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error en el análisis narrativo")
+
+@router.get("/correlations", tags=["Correlaciones"])
+async def get_correlations(sector: str, factor_key: str = None, lag: int = 0):
+    """
+    Devuelve las correlaciones de los sectores con un lag opcional en meses.
+    """
+    return correlation_service.get_correlations(sector, factor_key, lag)
 
 @router.get("/metadata/{sector}", tags=["Información"])
 async def get_sector_info(sector: str):

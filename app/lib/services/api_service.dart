@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/prediction_model.dart';
+import '../models/correlation_model.dart';
 
 class ApiService {
   final String baseUrl = "http://127.0.0.1:8000";
@@ -21,6 +22,32 @@ class ApiService {
       }
     } catch (e) {
       print("Error de conexión: $e");
+      return null;
+    }
+  }
+
+  Future<CorrelationModel?> getCorrelation(
+    String sector, [
+    String? factorKey,
+    int lag = 0,
+  ]) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          "$baseUrl/correlations?sector=$sector&factor_key=$factorKey&lag=$lag",
+        ),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        return CorrelationModel.fromJson(jsonResponse);
+      } else {
+        print("Error en la API de correlación: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      print("Error de conexión en correlación: $e");
       return null;
     }
   }
