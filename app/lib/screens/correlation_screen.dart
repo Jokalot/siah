@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import '../services/siah_service.dart';
 import '../models/correlation_model.dart';
 import '../models/sector_def.dart';
 import '../widgets/panels/analysis_control_panel.dart';
-import '../widgets/cards/correlation_card.dart';
+import '../widgets/charts/historical_trend_chart.dart';
 import '../widgets/charts/scatter_correlation_chart.dart';
 
 class CorrelationScreen extends StatefulWidget {
@@ -16,13 +16,11 @@ class CorrelationScreen extends StatefulWidget {
 class _CorrelationScreenState extends State<CorrelationScreen> {
   final ApiService apiService = ApiService();
 
-  // Current analysis parameters
   String _sector = 'Agro';
   String _factorKey = 'Presa El Molinito';
   int _lag = 0;
   AnalysisMode _mode = AnalysisMode.tendencia;
 
-  // The future that fetches data
   late Future<CorrelationModel?> _dataFuture;
 
   @override
@@ -50,7 +48,6 @@ class _CorrelationScreenState extends State<CorrelationScreen> {
     });
   }
 
-  /// Resolve the full sector definition
   SectorDef get _currentSector {
     return kSectors.firstWhere(
       (s) => s.apiKey == _sector,
@@ -73,14 +70,12 @@ class _CorrelationScreenState extends State<CorrelationScreen> {
         builder: (context, constraints) {
           final isWide = constraints.maxWidth > 900;
 
-          final panel = AnalysisControlPanel(
-            onChanged: _onControlsChanged,
-          );
+          final panel = AnalysisControlPanel(onChanged: _onControlsChanged);
 
           final chartArea = FutureBuilder<CorrelationModel?>(
             future: _dataFuture,
             builder: (context, snapshot) {
-              // ── Loading state ──
+              // CARGA DE ESTADO
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                   child: Column(
@@ -107,7 +102,7 @@ class _CorrelationScreenState extends State<CorrelationScreen> {
                 );
               }
 
-              // ── Error state ──
+              // ERROR DE ESTADO
               if (snapshot.hasError || snapshot.data == null) {
                 return Center(
                   child: Container(
@@ -153,7 +148,7 @@ class _CorrelationScreenState extends State<CorrelationScreen> {
                 );
               }
 
-              // ── Data loaded ──
+              // DATOS CARGADOS
               final data = snapshot.data!;
 
               if (_mode == AnalysisMode.tendencia) {
@@ -177,7 +172,7 @@ class _CorrelationScreenState extends State<CorrelationScreen> {
           );
 
           if (isWide) {
-            // ── Desktop: panel left (30%) | chart right (70%) ──
+            // ESCRITORIO: PANEL IZQUIERDO (30%) | GRÁFICO DERECHO (70%)
             return Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -191,26 +186,21 @@ class _CorrelationScreenState extends State<CorrelationScreen> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(8, 16, 16, 16),
-                    child: SingleChildScrollView(
-                      child: chartArea,
-                    ),
+                    child: SingleChildScrollView(child: chartArea),
                   ),
                 ),
               ],
             );
           }
 
-          // ── Mobile: panel top | chart bottom ──
+          // MÓVIL: PANEL SUPERIOR | GRÁFICO INFERIOR
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
                 panel,
                 const SizedBox(height: 16),
-                SizedBox(
-                  height: 500,
-                  child: chartArea,
-                ),
+                SizedBox(height: 500, child: chartArea),
               ],
             ),
           );
