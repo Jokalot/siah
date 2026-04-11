@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import '../services/siah_service.dart';
 import '../models/prediction_model.dart';
 import '../widgets/cards/sector_card.dart';
 
@@ -60,7 +60,8 @@ class _PredictionScreenState extends State<PredictionScreen> {
                                   child: SectorPredictionCard(
                                     data: agro,
                                     sectorName: "Agropecuario",
-                                    sectorDescription: "Argricultura y ganadería",
+                                    sectorDescription:
+                                        "Argricultura y ganadería",
                                     sectorIcon: Icons.agriculture,
                                     primaryColor: Colors.green,
                                   ),

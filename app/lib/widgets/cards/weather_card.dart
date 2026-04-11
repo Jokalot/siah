@@ -10,8 +10,7 @@ class WeatherCard extends StatefulWidget {
 }
 
 class _WeatherCardState extends State<WeatherCard> {
-  // El estado: empezamos con la primera presa de la lista
-  late DamLocation _selectedDam;
+  DamLocation? _selectedDam;
 
   @override
   void initState() {
@@ -20,11 +19,39 @@ class _WeatherCardState extends State<WeatherCard> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Card(
+      color: cs.surfaceContainer,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: cs.outline, style: BorderStyle.solid),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(50.0),
         child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "DATOS DEL CLIMA",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: cs.primary.withValues(alpha: 0.8),
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                Icon(
+                  Icons.sensors_rounded,
+                  size: 16,
+                  color: cs.primary.withValues(alpha: 0.5),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // Panel de control
             WeatherControlPanel(
               onDamSelected: (dam) {
                 setState(() {
@@ -32,8 +59,31 @@ class _WeatherCardState extends State<WeatherCard> {
                 });
               },
             ),
-            const Divider(height: 32),
-            WeatherDisplay(lat: _selectedDam.lat, lon: _selectedDam.lon),
+
+            Divider(
+              height: 60,
+              thickness: 0.5,
+              color: cs.outlineVariant.withValues(alpha: 0.2),
+            ),
+
+            if (_selectedDam != null)
+              WeatherDisplay(lat: _selectedDam!.lat, lon: _selectedDam!.lon)
+            else
+              const Center(child: CircularProgressIndicator()),
+
+            const SizedBox(height: 20),
+
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "Fuente: OpenWeatherMap",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: cs.primary.withValues(alpha: 0.8),
+                  letterSpacing: 1.5,
+                ),
+              ),
+            ),
           ],
         ),
       ),
