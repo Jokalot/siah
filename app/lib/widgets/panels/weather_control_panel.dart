@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../cards/weather_card.dart';
+import 'package:flutter/material.dart';
 
 class WeatherControlPanel extends StatefulWidget {
   final Function(DamLocation) onDamSelected;
@@ -12,6 +13,7 @@ class WeatherControlPanel extends StatefulWidget {
 
 class _WeatherControlPanelState extends State<WeatherControlPanel> {
   int _selectedIndex = 0;
+  int? _hoveredIndex;
 
   @override
   void initState() {
@@ -25,33 +27,56 @@ class _WeatherControlPanelState extends State<WeatherControlPanel> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          "Seleccionar presa",
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: cs.primary,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.water_drop_outlined, size: 18, color: cs.primary),
+            const SizedBox(width: 8),
+            Text(
+              "Seleccionar ubicación de presa",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: cs.onSurfaceVariant,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
+
         Wrap(
-          spacing: 8.0,
+          spacing: 8,
+          runSpacing: 8,
           children: List<Widget>.generate(_damLocations.length, (int index) {
-            return FilterChip(
+            final isSelected = _selectedIndex == index;
+            return ChoiceChip(
               label: Text(_damLocations[index].name),
-              selected: _selectedIndex == index,
+              selected: isSelected,
               onSelected: (bool selected) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-                widget.onDamSelected(_damLocations[index]);
+                if (selected) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                  widget.onDamSelected(_damLocations[index]);
+                }
               },
-              selectedColor: cs.primaryContainer,
-              checkmarkColor: cs.primary,
+              showCheckmark: false,
+              labelStyle: TextStyle(
+                color: isSelected ? Colors.white : cs.onSurface,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+              selectedColor: cs.primary,
+              backgroundColor: cs.surfaceContainerHigh,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: isSelected ? cs.primary : cs.outline),
+              ),
             );
           }),
         ),
