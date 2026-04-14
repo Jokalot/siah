@@ -12,6 +12,8 @@ app/.svn/
 app/.swiftpm/
 app/migrate_working_dir/
 
+.env
+
 app/*.iml
 app/*.ipr
 app/*.iws
