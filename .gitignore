@@ -14,6 +14,10 @@ app/migrate_working_dir/
 
 .env
 
+
+build/
+.dart_tool/
+
 app/*.iml
 app/*.ipr
 app/*.iws
